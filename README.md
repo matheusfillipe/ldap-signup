@@ -19,7 +19,7 @@ confirmation and allowing some basic configuration.
    fallback smtp to be used at first for some email hosts.
 5. The email and token is cached on redis and has a expiration time (1 hour by
    default). When the user open the url with the confirmation token the user
-   will be added to the configured ldap organization (BASE_DN).
+   will be added to the configured ldap organization (`BASE_DN`).
 6. You can limit captcha requests and registrations requests per ip hourly.
 
 ## Dependencies
@@ -29,7 +29,7 @@ confirmation and allowing some basic configuration.
 * install the php-ldap module and composer
 * redis configured with a password
 * imagemagick, ocrad and the php dependencies. For ubuntu:
-```sh
+```
 sudo apt install redis php-pear composer ocrad imagemagick
 sudo pear install mail
 sudo pear install Net_SMTP
@@ -61,7 +61,7 @@ location /signup {
    }
 }
 ```
-Add your BASE_URL and other configuration options to the config.php and you
+Add your `BASE_URL` and other configuration options to the config.php and you
 might be ready to go!
 
 ## Customization
