@@ -1,0 +1,83 @@
+<h1>Sign up Now!</h1>
+
+<form action="" method="POST">
+    <!-- Username input -->
+    <div class="form-outline mb-3">
+        <label class="form-label font-weight-bold" for="form3Example3">Username*</label>
+        <input pattern="[^\s]{<?php echo $VAL_USER->min_username.','.$VAL_USER->max_username;?>}" required title="At least 5 not whitespace characteres" name="username" type="text"
+            id="form3Example0"
+            class="form-control <?php if(isset($error) && $error && !isset($_POST['username'])){echo 'border-danger';}?>"
+            placeholder="JhonDoe"
+            value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>" />
+    </div>
+    <!-- 2 column grid layout with text inputs for the first and last names -->
+    <div class="row mb-3">
+        <div class="col">
+            <div class="form-outline">
+                <label class="form-label font-weight-bold" for="form3Example1">First name*</label>
+                <input pattern="[^\s]{<?php echo $VAL_USER->min_first_name.','.$VAL_USER->max_first_name;?>}" required title="At least 3 not whitespace characteres" name="name"
+                    type="text" id="form3Example1"
+                    class="form-control <?php if(isset($error) && $error && !isset($_POST['name'])){echo 'border-danger';}?>"
+                    placeholder="Jhon"
+                    value="<?php echo isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '' ?>" />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-outline">
+                <label class="form-label font-weight-bold" for="form3Example2">Last name*</label>
+                <input pattern="[^\s]{<?php echo $VAL_USER->min_last_name.','.$VAL_USER->max_last_name;?>}" required title="At least 3 not whitespace characteres" name="last_name"
+                    type="text" id="form3Example2"
+                    class="form-control <?php if(isset($error) && $error && !isset($_POST['last_name'])){echo 'border-danger';}?>"
+                    placeholder="Doe"
+                    value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : '' ?>" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Email input -->
+    <div class="form-outline mb-3">
+        <label class="form-label font-weight-bold" for="form3Example3">Email address*</label>
+        <input required name="email" type="email" id="form3Example3"
+            class="form-control <?php if(isset($error) && $error && !isset($_POST['email'])){echo 'border-danger';}?>"
+            placeholder="myemail@example.com"
+            value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" />
+    </div>
+
+    <!-- Password input -->
+    <div class="form-outline mb-3">
+        <label class="form-label font-weight-bold" for="form3Example4">Password*</label>
+        <input pattern="[^\s]{<?php echo $VAL_USER->min_password.','.$VAL_USER->max_password;?>}" required title="At least 8 not whitespace characteres" name="password"
+            type="password" id="form3Example4"
+            class="form-control <?php if(isset($error) && $error && !isset($_POST['password'])){echo 'border-danger';}?>"
+            placeholder="********"
+            value="<?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '' ?>" />
+    </div>
+    <!-- Password input -->
+    <div class="form-outline mb-3">
+        <label class="form-label font-weight-bold" for="form3Example4">Confirm your Password*</label>
+        <input pattern="[^\s]{<?php echo $VAL_USER->min_password.','.$VAL_USER->max_password;?>}" required title="At least 8 not whitespace characteres" name="password_confirm"
+            type="password" id="form3Example5"
+            class="form-control <?php if(isset($error) && $error && !isset($_POST['password_confirm'])){echo 'border-danger';}?>"
+            placeholder="********"
+            value="<?php echo isset($_POST['password_confirm']) ? htmlspecialchars($_POST['password_confirm']) : '' ?>" />
+    </div>
+    <!--captcha here-->
+    <div class="form-outline mb-3">
+
+        <label class="form-label font-weight-bold" for="form3Example4">Captcha:</label>
+        <div class="container mb-2 offset-md-2">
+            <img id="captcha" src="<?php echo $BASE_URL.'/captcha.php?token='.$_SESSION['captcha_token']; ?>" />
+            <div id="reload_captcha">
+                <button id="reload" class="btn btn-outline-info" type="button"> <span class="glyphicon glyphicon-refresh"
+                    aria-hidden="true"></span></button>
+            </div>
+        </div>
+        <input pattern="[^\s]{<?php echo $CAPTCHA_LENGTH; ?>,}" required title="Please fill the captcha. It has 5 characteres" name="captcha"
+            type="text" id="form3Example6" class="form-control" placeholder="Type what you see on the image above" />
+    </div>
+
+    <!-- Submit button -->
+    <button name="type" value="register" type="submit" class="btn btn-primary float-right btn-md">Sign up</button>
+
+</form>
+</div>

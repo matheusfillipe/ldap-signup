@@ -1,0 +1,76 @@
+<?php
+// Service base url
+$BASE_URL = "https://example.com/signup";
+
+// Ldap server
+$HOST = 'localhost';
+$PORT = 389;
+$USER = "admin";
+$PASSWORD = "myldappassword";
+$BASE_DN = 'cn={},ou=organization,dc=example,dc=com';
+
+// Redis password
+$REDIS_PASS = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+// Mail
+$SMTP = (object)[
+        "from" => 'frommail@mail.com',
+        'host' => 'tls://mail.com',
+        'port' => '465',
+        'username' => 'frommail@mail.com',
+        'password' => 'xxxxxxxxx'
+];
+$FALLBACK_SMTP = (object)[
+        "from" => 'another@gmail.com',
+        'host' => 'tls://gmail.com',
+        'port' => '465',
+        'username' => 'signup@gmail.com',
+        'password' => 'xxxxxxxxxx'
+];
+
+// User Validation
+$VAL_USER = (object)[
+        "min_username" => 5,
+        "max_username" => 32,
+        "min_first_name" => 3,
+        "max_first_name" => 32,
+        "min_last_name" => 3,
+        "max_last_name" => 32,
+        "min_password" => 8,
+        "max_password" => 128
+];
+$CAPTCHA_LENGTH = 5;
+
+// not accept emails from
+$MAIL_HOST_BLACKLIST = ["mailinator.com"];
+// Use fallback_smtp directly for these hosts
+$MAIL_HOST_DIRECT_FALLBACK = ["hotmail.com"];
+
+// Max registrations from one ip per hour
+$HOURLY_REGISTRATIONS = 3;
+
+// Max Captcha requests for one  ip per hour
+$HOURLY_CAPTCHAS = 15;
+
+// Expiration delay for mail confirmation in seconds. After this time the email
+// confirmation link will say 'token expired'
+$MAIL_CONFIRMATION_AWAIT_DELAY = 3600;
+
+// CONFIRMATION EMAIL TEMPLATE
+// text is the version for mail clients that don't support html
+// html is the version with html support
+$MAIL_TEMPLATE = (object)[
+        "subject" => "Confirm your email", 
+        "text" => "To complete your registration please paste this to your browser: {{url}}",
+        "html" => "<html><body>
+                <h2>Almost there! Click on the link bellow to confirm your email address</h2>
+                <a href='{{url}}'>Confirm</a>
+        </body></html>"
+];
+
+// url to redirect to after mail confirmation. Leave empty to none
+$REDIRECT_TO = "";
+
+// displays php errors on the html page. Set to false for production
+$DEBUG = false;
+?>
