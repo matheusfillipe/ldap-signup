@@ -63,7 +63,7 @@ function verify_request($user){
         $error = $error."Username has to be bigger than ".($VAL_USER->min_username-1)." characters<br>";
         unset($_POST["username"]);
     }
-    if (preg_match('/[\'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\ 0-9]/',$user->user_name)) {
+    if (preg_match('/[\'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\]/',$user->user_name)) {
         $error = $error."The username cannot contain special characters<br>";
         unset($_POST["username"]);
     }
@@ -90,7 +90,7 @@ function verify_request($user){
         $error = $error."First Name has to be bigger than ".($VAL_USER->min_first_name-1)." characters<br>";
         unset($_POST["name"]);
     }
-    if (preg_match('/[\'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\ 0-9]/',$user->name)) {
+    if (preg_match('/[\'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\0-9]/',$user->name)) {
         $error = $error."The first name cannot contain special characters or numbers<br>";
         unset($_POST["name"]);
     }
