@@ -1,10 +1,10 @@
-#LDAP SIGNUP
+# LDAP SIGNUP
 
 This is a simple registration script for ldap written fully in php that will
 allow you to have a registration page that does all the form validation, mail
 confirmation and allowing some basic configuration.
 
-##Registration process
+## Registration process
 
 1. The user fill the forms and the captcha
 2. All the input data is validated on the backend. There are blacklists for
@@ -22,7 +22,7 @@ confirmation and allowing some basic configuration.
    will be added to the configured ldap organization (BASE_DN).
 6. You can limit captcha requests and registrations requests per ip hourly.
 
-##Dependencies
+## Dependencies
 
 * install openldap on your server like on [this](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-an-phpldapadmin-on-ubuntu-16-04) tutorial for example
 * An http + php server like apache or nginx
@@ -37,7 +37,7 @@ sudo pear install Auth_SASL
 sudo pear install mail_mime
 ```
 
-##Installation
+## Installation
 
 Clone or download this repository to some path and run: `composer install`
 Copy the example config to the right place: `mv config.php.example config.php`
@@ -64,7 +64,7 @@ location /signup {
 Add your BASE_URL and other configuration options to the config.php and you
 might be ready to go!
 
-##Customization
+## Customization
 
 If you want to add custom css, javascript or html you can do it by editing the files on the `static/`
 folder but be aware that all of them are loaded for any page of the registration process.
@@ -76,26 +76,26 @@ of registration, add a navbar to head.htm and so on.
 The `blacklists/` Folder contains usernames.php and passwords.php which are
 lists of usernames and passwords that won't be allowed.
 
-###config.php
+### config.php
 
 The example config contains many comments and the variables are self
 explanatory. 
 What you need to set up to get going is your redis password,
-LDAP's USER, PORT, PASSWORD and HOST. You need to set SMTP and you can set
+LDAP's `USER`, `PORT`, `PASSWORD` and `HOST`. You need to set `SMTP` and you can set
 `$FALLBACK_SMTP = $SMTP` if you don't want to use the fallback feature.
 
-On the BASE_DN variable, '{}' will be replaced by the username.
+On the `BASE_DN` variable, '{}' will be replaced by the username.
 
-Don't forget to set your BASE_URL correctly. That is the url the log in page
-will be presented on, it will end with /signup if you used the example nginx
+Don't forget to set your `BASE_URL` correctly. That is the url the log in page
+will be presented on, it will end with `/signup` if you used the example nginx
 location.
 
-Also you might want to change the email template (MAIL_TEMPLATE variable). It
+Also you might want to change the email template (`MAIL_TEMPLATE` variable). It
 has both a text and a html parameter.
 
-You can also blacklist email services with the MAIL_HOST_BLACKLIST. User
+You can also blacklist email services with the `MAIL_HOST_BLACKLIST`. User
 registering with those mail services won't be allowed.
 
-MAIL_HOST_DIRECT_FALLBACK variable if set will cause the FALLBACK_SMTP to be
+`MAIL_HOST_DIRECT_FALLBACK` variable if set will cause the `FALLBACK_SMTP` to be
 used instead of SMTP if the user is trying to register with an email host that
 is on that list.
