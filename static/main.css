@@ -6,4 +6,5 @@ body {
 #main_container {
   width: clamp(400px,70%,700px);
   margin-bottom: 200px;
+  margin-top: 20px;
 }
