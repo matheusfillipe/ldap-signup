@@ -30,7 +30,7 @@ confirmation and allowing some basic configuration.
 * redis configured with a password
 * imagemagick, ocrad and the php dependencies. For ubuntu:
 ```
-sudo apt install redis php-pear composer ocrad imagemagick
+sudo apt install redis php-pear composer ocrad imagemagick php-redis # take care on the php version
 sudo pear install mail
 sudo pear install Net_SMTP
 sudo pear install Auth_SASL
