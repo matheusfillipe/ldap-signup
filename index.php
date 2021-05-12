@@ -239,10 +239,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $token = $_GET["token"];
                 $user = redis_get($token);
                 if ($user){
-                    echo "<h1>Email Confirmation</h1>";
                     if (ldap_add_user($user)){
                         if ($REDIRECT_TO)
-                            header("Location: ".$REDIRECT_TO);
+                            header( "refresh:5;url=".$REDIRECT_TO);
 
                         $pending = redis_get("pending");
                         if ($pending){
@@ -253,8 +252,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             }
                         }
                         redis_inc_ipdata(getClientIP(), "register");
+                        echo "<h1>Email Confirmation</h1>";
                         include "html/mail_confirmed.htm";
                     }else{
+                        echo "<h1>Email Confirmation</h1>";
                         include "html/registration_error.htm";
                     }
                     redis_delete($token);

@@ -16,7 +16,8 @@ if (isset($_SESSION['captcha_token']) && $_GET['token']==$_SESSION['captcha_toke
         $phraseBuilder = new PhraseBuilder($CAPTCHA_LENGTH);
         $builder = new CaptchaBuilder(null, $phraseBuilder);
         $builder->setDistortion(1);
-        $builder->buildAgainstOCR(250, 40);
+        if (isset($SIMPLECAPTCHA) && $SIMPLECAPTCHA) $builder->build(250, 40);
+        else $builder->buildAgainstOCR(250, 40);
         $_SESSION['captcha'] = $builder->getPhrase();
         $builder->output();
 }else echo "huh?";

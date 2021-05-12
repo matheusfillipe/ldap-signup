@@ -41,6 +41,9 @@ $VAL_USER = (object)[
 ];
 $CAPTCHA_LENGTH = 5;
 
+// Use unsafe but easier captcha (no ocr testing)
+$SIMPLECAPTCHA = false;
+
 // not accept emails from
 $MAIL_HOST_BLACKLIST = ["mailinator.com"];
 // Use fallback_smtp directly for these hosts
@@ -68,7 +71,7 @@ $MAIL_TEMPLATE = (object)[
         </body></html>"
 ];
 
-// url to redirect to after mail confirmation. Leave empty to none
+// url to redirect to after mail confirmation. It will be 5 seconds of delay. Leave empty to none
 $REDIRECT_TO = "";
 
 // displays php errors on the html page. Set to false for production
