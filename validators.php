@@ -1,18 +1,16 @@
 <?php
-include_once'ldap.php';
-include_once'redis.php';
-include_once'config.php';
-include_once'utils.php';
+include_once 'ldap.php';
+include_once 'redis.php';
+include_once 'config.php';
+include_once 'utils.php';
 
-$INCLUDE_STRINGS_PATH = "templates_".$LANG_CC;
-if (isset($LANG_CC) && !empty($LANG_CC)) $TEMPLATE = $INCLUDE_STRINGS_PATH;
-else $TEMPLATE = "templates";
-
+$TEMPLATE = template_path();
 
 function validate_username(string $username)
 {
-        include_once'config.php';
-        include_once$TEMPLATE.'/strings.php';
+        global $TEMPLATE;
+        include 'config.php';
+        include $TEMPLATE . 'strings.php';
         $error = "";
         if (ldap_user_count($username)) {
                 $error = $error . $USERNAME_VALIDATION_ERROR->registered;
@@ -23,7 +21,10 @@ function validate_username(string $username)
                 unset($_POST["username"]);
         }
         if (strlen($username) > $VAL_USER->max_username) {
+                echo $VAL_USER->max_username;
+                echo $USERNAME_VALIDATION_ERROR->smaller_than;
                 $error = $error . format($USERNAME_VALIDATION_ERROR->smaller_than, ["num" => $VAL_USER->max_username + 1]);
+                echo $error;
                 unset($_POST["username"]);
         }
         if (strlen($username) < $VAL_USER->min_username) {
@@ -38,9 +39,9 @@ function validate_username(string $username)
                 $error = $error . $USERNAME_VALIDATION_ERROR->no_number_begining;
                 unset($_POST["username"]);
         }
-        include_once"blacklists/usernames.php";
+        include "blacklists/usernames.php";
         if (in_array($username, $USERNAME_BLACKLIST)) {
-                $error = $error . $USERNAME_VALIDATION_ERROR->blacklisted; 
+                $error = $error . $USERNAME_VALIDATION_ERROR->blacklisted;
                 unset($_POST["username"]);
         }
         return $error;
@@ -48,8 +49,9 @@ function validate_username(string $username)
 
 function validate_name(string $name, object $ERRORS)
 {
-        include_once "config.php";
-        include_once$TEMPLATE.'/strings.php';
+        global $TEMPLATE;
+        include "config.php";
+        include $TEMPLATE . 'strings.php';
         $error = "";
         if (preg_match("/\s/", $name)) {
                 $error = $error . $ERRORS->no_whitespaces;
@@ -72,12 +74,13 @@ function validate_name(string $name, object $ERRORS)
 
 function validate_email(string $email)
 {
-        include_once "config.php";
-        include_once$TEMPLATE.'/strings.php';
+        global $TEMPLATE;
+        include "config.php";
+        include $TEMPLATE . 'strings.php';
         $error = "";
 
         if (ldap_mail_count($email)) {
-                $error = $error . format($EMAIL_VALIDATION_ERROR->registered, ["link" => $BASE_URL."?type=recover"]);
+                $error = $error . format($EMAIL_VALIDATION_ERROR->registered, ["link" => $BASE_URL . "?type=recover"]);
                 unset($_POST["email"]);
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -101,8 +104,9 @@ function validate_email(string $email)
 
 function validate_password(string $password)
 {
-        include_once "config.php";
-        include_once$TEMPLATE.'/strings.php';
+        global $TEMPLATE;
+        include "config.php";
+        include $TEMPLATE . 'strings.php';
         $error = "";
         if ($_POST["password"] != $_POST["password_confirm"]) {;
                 $error = $error . $PASSWORD_VALIDATION_ERROR->no_match;
@@ -118,7 +122,7 @@ function validate_password(string $password)
                 unset($_POST["password"]);
                 unset($_POST["password_confirm"]);
         }
-        include_once"blacklists/password.php";
+        include "blacklists/password.php";
         if (in_array($password, $PASSWORD_BLACKLIST)) {
                 $error = $error . $PASSWORD_VALIDATION_ERROR->blacklisted;
                 unset($_POST["password"]);

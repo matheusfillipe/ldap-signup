@@ -5,28 +5,33 @@ include_once 'redis.php';
 include_once 'utils.php';
 
 if (!$DEBUG)    error_reporting(0);
+else error_reporting(1);
 session_start();
-
-$INCLUDE_STRINGS_PATH = "templates_".$LANG_CC;
-if (isset($LANG_CC) && !empty($LANG_CC)) $TEMPLATE = $INCLUDE_STRINGS_PATH;
-else $TEMPLATE = "templates";
-
-include_once $TEMPLATE.'/strings.php';
-
-if(!file_exists(stream_resolve_include_path($INCLUDE_STRINGS_PATH.'/strings.php'))){
-    echo format($RUNTIME_ERROR->template_not_found, ["template"=>$INCLUDE_STRINGS_PATH, "langcc"=>$LANG_CC]);
-}
-
 
 use Gregwar\Captcha\PhraseBuilder;
 
+$URI = array_slice(explode("/", explode('?', $_SERVER['REQUEST_URI'], 2)[0]), -1)[0];
+if (strlen($URI) == 2){
+    $GLOBALS["cc"] = $URI;
+    $_SESSION["cc"] = $URI;
+}
+
+if (isset($_GET["lang"])){
+    $GLOBALS["cc"] = $_GET["lang"];
+    $_SESSION["cc"] = $_GET["lang"];
+}
+
+$TEMPLATE = template_path();
+
+
 
 function register_page($error=false){
+    $TEMPLATE = template_path();
     include 'config.php';
     if ($error)
-        include $TEMPLATE.'/error.htm';
+        include $TEMPLATE.'error.htm';
     $_SESSION["captcha_token"] = generateRandomString(12);
-    include $TEMPLATE."/register.htm";
+    include $TEMPLATE."register.htm";
     echo '
     <script>
         const reload_captcha = async (e) => {
@@ -54,9 +59,10 @@ function register_page($error=false){
 
 
 function verify_request($user){
+    $TEMPLATE = template_path();
     unset($_SESSION['captcha_token']);
-    include_once 'validators.php';
-    include_once $TEMPLATE.'/strings.php';
+    include 'validators.php';
+    include $TEMPLATE.'strings.php';
     $password = $_POST["password"];
     $error = "";
 
@@ -77,10 +83,7 @@ function verify_request($user){
 
 function approve_request($user){
     include "mail.php";
-    $token = "";
-    do {
-        $token = generateRandomString();
-    } while (redis_get($token));
+    $token = generateRandomString();
     redis_set($token, $user, $MAIL_CONFIRMATION_AWAIT_DELAY);
     $pending = redis_get("pending");
     if ($pending){
@@ -104,12 +107,13 @@ function approve_request($user){
     $_SESSION['resend'] = generateRandomString(12);
     $_SESSION['token'] = $token;
     $_SESSION['email'] = $user->email;
+    $TEMPLATE = template_path();
     include $TEMPLATE."confirm_your_email.htm";
 }
 
 
 // PAGE
-include $TEMPLATE."/header.htm";
+include $TEMPLATE."header.htm";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include 'ldap.php';
@@ -118,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             case "register":
                 $user = new User($_POST["username"], $_POST["name"], $_POST["last_name"], $_POST["email"], $_POST["password"]); 
                 if (redis_inc_ipdata(getClientIP(), "register", true) > $HOURLY_REGISTRATIONS){
-                    include $TEMPLATE."/registration_limit.htm";
+                    include $TEMPLATE."registration_limit.htm";
                 }else{
                     $error = verify_request($user);
                     if ($error)
@@ -155,21 +159,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                         redis_inc_ipdata(getClientIP(), "register");
                         echo $STRINGS->email_confirmation;
-                        include $TEMPLATE."/mail_confirmed.htm";
+                        include $TEMPLATE."mail_confirmed.htm";
                     }else{
                         echo $STRINGS->email_confirmation;
-                        include $TEMPLATE."/registration_error.htm";
+                        include $TEMPLATE."registration_error.htm";
                     }
                     redis_delete($token);
                 }else{
-                    include $TEMPLATE."/token_expired.htm";
+                    include $TEMPLATE."token_expired.htm";
                 }
             }
             break;
         case "resend":
             if (isset($_GET['token']) && isset($_SESSION['resend']) && $_GET['token'] == $_SESSION['resend']){
                 include "mail.php";
-                include $TEMPLATE."/resend_mail.htm";
+                include $TEMPLATE."resend_mail.htm";
                 $token = $_SESSION['token'];
                 $url = $BASE_URL."?type=confirmation&token=".$token;
                 $smtp = $FALLBACK_SMTP;
@@ -196,5 +200,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     register_page();
 }
 
-include $TEMPLATE."/bottom.htm";
-?>
+include $TEMPLATE."bottom.htm";

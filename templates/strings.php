@@ -1,6 +1,7 @@
 <?php
 $RUNTIME_ERROR = (object)[
-        "template_not_found" => "Either you did not create the folder {{template}} or strings.php is missing on it. Maybe you have set {{langcc}} wrong on config.php?",
+        "not_found" => "<center><h2>This page does not exist!</h2></center>",
+        "template_not_found" => "Either you did not create the folder '{{template}}' or strings.php is missing on it. Maybe you have set LANG_CC: '{{langcc}}' wrong on config.php?",
         "user_trying_invalid_get" => "INVALID REQUEST. THERE IS NOTHING HERE FOR YOU",
 ];
 
