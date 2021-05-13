@@ -99,3 +99,33 @@ registering with those mail services won't be allowed.
 `MAIL_HOST_DIRECT_FALLBACK` variable if set will cause the `FALLBACK_SMTP` to be
 used instead of SMTP if the user is trying to register with an email host that
 is on that list.
+
+### Translating
+
+The `LANG_CC` variable if set will determine different templates to be used by
+default.
+It is reccomended to set to a 2 letter country code like `il`, `pt`, `us`, `uk`
+and so on, but you can use any string. 
+
+To get started templating and translating get started by setting that variable
+to some string like "il" and copy the template folder:
+```
+cp -r templates templates_il
+```
+
+Pay attention to the undescore + `LANG_CC` termination. In that example if
+LANG_CC is set to `il` then templates_il will be loaded by default. Otherwise
+you can access different languages either by passing the termination as a uri
+path or with the lang GET parameter like in `?lang=il`. Let's suppose you
+created a templates_pt folder. So you can either access that version of the
+site with `mysite.com/signup/pt` or `mysite.com/signup?lang=pt`
+
+One important file to edit under templates is strings.php. This file contains
+many strings in a template format that are used in some parts of the
+application, like validation errors on the frontend. Pay attention to the
+template notation with double braces: `{{num}}`.
+
+
+### Field Validation
+
+Check validators.php.

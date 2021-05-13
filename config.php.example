@@ -2,6 +2,9 @@
 // Service base url
 $BASE_URL = "https://example.com/signup";
 
+// Language country code. The default language to look for. Leave empty for the default html folder
+$LANG_CC = "";
+
 // Ldap server
 $HOST = 'localhost';
 $PORT = 389;
