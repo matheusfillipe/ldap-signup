@@ -97,5 +97,8 @@ $PASSWORD_CHANGED_EMAIL_TEMPLATE = (object)[
 // url to redirect to after mail confirmation. It will be 5 seconds of delay. Leave empty to none
 $REDIRECT_TO = "";
 
+/// Registration token size:
+$REG_TOKEN_LEN = 24;
+
 // displays php errors on the html page. Set to false for production
 $DEBUG = false;

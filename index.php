@@ -100,7 +100,9 @@ function verify_request($user)
     $TEMPLATE = template_path();
     unset($_SESSION['captcha_token']);
     include $TEMPLATE . 'strings.php';
+    include 'config.php';
     $password = $_POST["password"];
+    $registration_token = $_POST["registration_token"];
     $error = "";
 
     $error .= validate_username($user->user_name);
@@ -108,12 +110,24 @@ function verify_request($user)
     $error .= validate_name($user->last_name, $LAST_NAME_VALIDATION_ERROR);
     $error .= validate_email($user->email);
     $error .= validate_password($password);
-
+    if (strlen($registration_token) != $REG_TOKEN_LEN){
+        $error .= "The registration token is incorrect";
+        unset($_POST['registration_token']);
+    }
+    $accept = redis_get($registration_token);
+    if (!isset($accept->valid)){
+        $error .= "The registration token is incorrect";
+        unset($_POST['registration_token']);
+    }
 
     if (!(isset($_SESSION['captcha']) && PhraseBuilder::comparePhrases($_SESSION['captcha'], $_POST['captcha']))) {
         $error = $error . $STRINGS->wrong_captcha;
     }
     unset($_SESSION["captcha"]);
+
+    if (empty($error)){
+        redis_delete($registration_token);
+    }
 
     return $error;
 }
