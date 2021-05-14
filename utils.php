@@ -29,27 +29,25 @@ function format(string $string, array $values)
     return $string;
 }
 
-function template_path(string $lang_cc = null){
+function template_path(string $lang_cc = null)
+{
     include "config.php";
-    if (isset($_SESSION["cc"]))
-        $lang_cc = $GLOBALS["cc"];
-    if (isset($GLOBALS["cc"]))
-        $lang_cc = $GLOBALS["cc"];
-    if ($lang_cc)
-        $INCLUDE_STRINGS_PATH = "templates_".$lang_cc;
-    else
-        $INCLUDE_STRINGS_PATH = "templates";
+    if (isset($LANG_CC) && !empty($LANG_CC) && $lang_cc == null) $lang_cc = $LANG_CC;
+    if (isset($_SESSION["cc"])) $lang_cc = $GLOBALS["cc"];
+    if (isset($GLOBALS["cc"]))  $lang_cc = $GLOBALS["cc"];
 
-    if (isset($lang_cc) && !empty($lang_cc)) $TEMPLATE = $INCLUDE_STRINGS_PATH."/";
+    if ($lang_cc) $INCLUDE_STRINGS_PATH = "templates_" . $lang_cc;
+    else  $INCLUDE_STRINGS_PATH = "templates";
+
+    if (isset($lang_cc) && !empty($lang_cc)) $TEMPLATE = $INCLUDE_STRINGS_PATH . "/";
     else $TEMPLATE = "templates/";
 
-    include $TEMPLATE.'strings.php';
+    include $TEMPLATE . 'strings.php';
 
-    if(!isset($RUNTIME_ERROR)){
+    if (!isset($RUNTIME_ERROR)) {
         include_once 'templates/strings.php';
         echo $RUNTIME_ERROR->not_found;
-        echo "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>";
-        echo format($RUNTIME_ERROR->template_not_found, ["template"=>$INCLUDE_STRINGS_PATH, "langcc"=>$LANG_CC]);
+        echo format($RUNTIME_ERROR->template_not_found, ["template" => $INCLUDE_STRINGS_PATH, "langcc" => $LANG_CC]);
         die();
     }
 

@@ -52,7 +52,7 @@ location /signup {
       fastcgi_pass unix:/run/php/php7.4-fpm.sock;                      
       include fastcgi_params;                                          
    }                                                                    
-   location ~ ^/signup/static/.*(\.html|\.css|\.js)$ {                  
+   location ~ ^/signup/static/.+$ {                  
       root /var/www/html/;                                             
       try_files $uri =404;                                             
    }                                                                               
@@ -124,6 +124,9 @@ One important file to edit under templates is strings.php. This file contains
 many strings in a template format that are used in some parts of the
 application, like validation errors on the frontend. Pay attention to the
 template notation with double braces: `{{num}}`.
+
+You can edit `email.php` to change the mail template messages that are sent for
+each language.
 
 
 ### Field Validation

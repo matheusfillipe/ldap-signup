@@ -65,6 +65,8 @@ $MAIL_CONFIRMATION_AWAIT_DELAY = 3600;
 // CONFIRMATION EMAIL TEMPLATE
 // text is the version for mail clients that don't support html
 // html is the version with html support
+// You can create templaets for different languages under
+// templates_cc/email.php
 $MAIL_TEMPLATE = (object)[
         "subject" => "Confirm your email", 
         "text" => "To complete your registration please paste this to your browser: {{url}}",

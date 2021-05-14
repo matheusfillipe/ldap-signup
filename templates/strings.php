@@ -48,6 +48,9 @@ $PASSWORD_VALIDATION_ERROR = (object)[
 $STRINGS = (object)[
         "email_confirmation" => "<h1>Email Confirmation</h1>",
         "reloading_captcha" => "Loading...",
+        "wrong_captcha" => "Wrong captcha!<br>",
+        "recover_email_not_registered" => "This email is not registered<br>",
+        "change_password_ldap_error" => "<h2>Something went wrong.</h2>",
 ];
 
 ?>
