@@ -31,4 +31,3 @@
       $redis = connect();
       $redis->del($key);
    }
-?>

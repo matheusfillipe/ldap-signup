@@ -32,9 +32,9 @@ function format(string $string, array $values)
 function template_path(string $lang_cc = null)
 {
     include "config.php";
-    if (isset($LANG_CC) && !empty($LANG_CC) && $lang_cc == null) $lang_cc = $LANG_CC;
     if (isset($_SESSION["cc"])) $lang_cc = $GLOBALS["cc"];
     if (isset($GLOBALS["cc"]))  $lang_cc = $GLOBALS["cc"];
+    if (isset($LANG_CC) && !empty($LANG_CC) && $lang_cc == null) $lang_cc = $LANG_CC;
 
     if ($lang_cc) $INCLUDE_STRINGS_PATH = "templates_" . $lang_cc;
     else  $INCLUDE_STRINGS_PATH = "templates";
