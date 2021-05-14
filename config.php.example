@@ -76,9 +76,26 @@ $MAIL_TEMPLATE = (object)[
         </body></html>"
 ];
 
+$RECOVERY_EMAIL_TEMPLATE = (object)[
+        "subject" => "Change your password!",
+        "text"    => "Seems you requested a password change. If that wasn't you please ignore this message. Otherwise go to this url to change your password: {{url}}",
+        "html"    => "<html><body>
+                <h3>Seems you requested a password change. If that wasn't you please ignore this message. Otherwise go to this url to change your password</h3>
+                <a href='{{url}}'>Click here</a> to change your password
+        </body></html>"
+];
+
+
+$PASSWORD_CHANGED_EMAIL_TEMPLATE = (object)[
+        "subject" => "Your password was changed",
+        "text"    => "Your password was chanegd successfully. If this wasn't you please contact support",
+        "html"    => "<html><body>
+                <h3>Your password was chanegd successfully. If this wasn't you please contact support</h3>
+        </body></html>"
+];
+
 // url to redirect to after mail confirmation. It will be 5 seconds of delay. Leave empty to none
 $REDIRECT_TO = "";
 
 // displays php errors on the html page. Set to false for production
 $DEBUG = false;
-?>

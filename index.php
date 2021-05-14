@@ -1,8 +1,11 @@
 <?php
 require_once 'vendor/autoload.php';
-include_once 'config.php';
+include 'config.php';
 include_once 'redis.php';
 include_once 'utils.php';
+include_once 'mail.php';
+include_once 'ldap.php';
+include_once 'validators.php';
 
 if (!$DEBUG)    error_reporting(0);
 else error_reporting(1);
@@ -27,10 +30,8 @@ $TEMPLATE = template_path();
 function send_confirmation_email(string $mail, object $smtp, string $url)
 {
     include 'config.php';
-    include 'utils.php';
-    include "mail.php";
     $TEMPLATE = template_path();
-    include $TEMPLATE . "emails.php";
+    include $TEMPLATE . "email.php";
 
     send_mail($mail, $smtp, (object) [
         "subject" => $MAIL_TEMPLATE->subject,
@@ -42,10 +43,8 @@ function send_confirmation_email(string $mail, object $smtp, string $url)
 function send_recovery_email(string $mail, object $smtp, string $url)
 {
     include 'config.php';
-    include 'utils.php';
-    include "mail.php";
     $TEMPLATE = template_path();
-    include $TEMPLATE . "emails.php";
+    include $TEMPLATE . "email.php";
 
     send_mail($mail, $smtp, (object) [
         "subject" => $RECOVERY_EMAIL_TEMPLATE->subject,
@@ -100,7 +99,6 @@ function verify_request($user)
 {
     $TEMPLATE = template_path();
     unset($_SESSION['captcha_token']);
-    include 'validators.php';
     include $TEMPLATE . 'strings.php';
     $password = $_POST["password"];
     $error = "";
@@ -122,7 +120,7 @@ function verify_request($user)
 
 function approve_request($user)
 {
-    include "mail.php";
+    include 'config.php';
     $token = generateRandomString();
     redis_set($token, $user, $MAIL_CONFIRMATION_AWAIT_DELAY);
     $pending = redis_get("pending");
@@ -146,12 +144,30 @@ function approve_request($user)
     include $TEMPLATE . "confirm_your_email.htm";
 }
 
+function recover_form($error = null)
+{
+    $TEMPLATE = template_path();
+    include 'config.php';
+    $_SESSION["captcha_token"] = generateRandomString(12);
+    if ($error)
+        include $TEMPLATE . 'error.htm';
+    include $TEMPLATE . "recover_email_form.htm";
+    reload_captcha_script();
+}
+
+function new_password_form($error = null)
+{
+    $TEMPLATE = template_path();
+    if ($error)
+        include $TEMPLATE . 'error.htm';
+    include $TEMPLATE . "recover_new_password_form.htm";
+}
+
 
 // PAGE
 include $TEMPLATE . "header.htm";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include 'ldap.php';
     if (isset($_POST['type'])) {
         switch ($_POST['type']) {
             case "register":
@@ -173,6 +189,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $email = $_POST["email"];
                 if (!ldap_mail_count($email)) {
+                    unset($_POST['email']);
                     $error = $error . $STRINGS->recover_email_not_registered;
                 }
 
@@ -185,9 +202,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     include $TEMPLATE . "registration_limit.htm";
                 } else {
                     if ($error) {
-                        include $TEMPLATE . 'error.htm';
-                        include $TEMPLATE . "register.htm";
-                        reload_captcha_script();
+                        recover_form($error);
                     } else {
                         include $TEMPLATE . 'strings.php';
                         $token = generateRandomString();
@@ -198,32 +213,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $smtp = $FALLBACK_SMTP;
                         else
                             $smtp = $SMTP;
-                        send_confirmation_email($user->email, $smtp, $url);
                         $_SESSION['resend']  = generateRandomString(12);
                         $_SESSION['token']   = $token;
                         $_SESSION['email']   = $email;
                         $_SESSION['recover'] = $email;
                         $TEMPLATE = template_path();
-                        include $TEMPLATE . "confirm_your_email.htm";
                         send_recovery_email($email, $smtp, $url);
+                        include $TEMPLATE . "confirm_your_email.htm";
                     }
                 }
                 break;
 
             case "password_change":
-                include 'validators.php';
-                include 'ldap.php';
-                $TEMPLATE = template_path();
-                include $TEMPLATE . "register.htm";
                 $password = $_POST['password'];
                 $error = validate_password($password);
                 if ($error) {
-                    include $TEMPLATE . 'error.htm';
-                    include $TEMPLATE . "recover_new_password_form.htm";
-                }else {
+                    new_password_form($error);
+                } else {
+                    $TEMPLATE = template_path();
                     include $TEMPLATE . "recover_success.htm";
                     include $TEMPLATE . "email.php";
-                    include 'mail.php';
                     $email = $_SESSION["email_change"];
                     if (change_password($email, $password)) {
                         if (in_array(explode("@", $email)[1], $MAIL_HOST_DIRECT_FALLBACK))
@@ -231,14 +240,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         else
                             $smtp = $SMTP;
                         send_mail($email, $smtp, $PASSWORD_CHANGED_EMAIL_TEMPLATE);
-                        unset($_SESSION["email_change"]);
-                    }
-                    else {
+                    } else {
                         include $TEMPLATE . "strings.php";
                         echo $STRINGS->change_password_ldap_error;
                     }
+                    unset($_SESSION["email_change"]);
+                    redis_delete($_SESSION['token']);
                 }
                 break;
+        }
     }
 } elseif (isset($_GET['type'])) {
     switch ($_GET['type']) {
@@ -246,7 +256,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!isset($_GET["token"])) {
                 echo $RUNTIME_ERROR->user_trying_invalid_get;
             } else {
-                include "ldap.php";
                 $token = $_GET["token"];
                 $user = redis_get($token);
                 if ($user && gettype($user) == "object") {
@@ -282,12 +291,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $url = $BASE_URL . "?type=confirmation&token=" . $token;
                 $smtp = $FALLBACK_SMTP;
                 $address = $_SESSION["email"];
-                if (isset($_SESSION['recover'])){
+                if (isset($_SESSION['recover'])) {
                     $url = $BASE_URL . "?type=password_change&token=" . $token;
                     send_recovery_email($address, $smtp, $url);
                     unset($_SESSION['recover']);
-                }
-                else
+                } else
                     send_confirmation_email($address, $smtp, $url);
                 unset($_SESSION['resend']);
                 unset($_SESSION['token']);
@@ -296,21 +304,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             break;
 
         case "recover":
-            $TEMPLATE = template_path();
-            include $TEMPLATE . "register.htm";
-            include 'config.php';
-            $_SESSION["captcha_token"] = generateRandomString(12);
-            reload_captcha_script();
+            recover_form();
             break;
 
         case "password_change":
             $TEMPLATE = template_path();
-            include $TEMPLATE . "register.htm";
             $token = $_GET["token"];
             $email = redis_get($token);
             $_SESSION["email_change"] = $email;
-            if ($email && gettype($email) == "string"){
-                include $TEMPLATE . "recover_new_password_form.htm";
+            $_SESSION["token"] = $token;
+            if ($email && gettype($email) == "string") {
+                new_password_form();
             } else {
                 include $TEMPLATE . "token_expired.htm";
             }

@@ -18,6 +18,8 @@ if (isset($_SESSION['captcha_token']) && $_GET['token']==$_SESSION['captcha_toke
         $builder->setDistortion(1);
         if (isset($SIMPLECAPTCHA) && $SIMPLECAPTCHA) $builder->build(250, 40);
         else $builder->buildAgainstOCR(250, 40);
+        $builder = new CaptchaBuilder;
+        $builder->build();
         $_SESSION['captcha'] = $builder->getPhrase();
         $builder->output();
 }else echo "huh?";
