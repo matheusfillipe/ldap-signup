@@ -6,6 +6,8 @@ confirmation and allowing some basic configuration.
 
 ## Registration process
 
+This branch also requires a secret token for registration that can be generated with: `php create_token.php`
+
 1. The user fill the forms and the captcha
 2. All the input data is validated on the backend. There are blacklists for
    email hosts, usernames, passwords. There are basic filters like not starting
