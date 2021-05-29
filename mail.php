@@ -19,7 +19,14 @@ function send_mail(string $email, object $smtp, object $message) {
             'username' => $smtp->username, //your gmail account
             'password' => $smtp->password // your password
         ));
-
+    
+   $mime_params = array(
+      'text_encoding' => '7bit',
+      'text_charset'  => 'UTF-8',
+      'html_charset'  => 'UTF-8',
+      'head_charset'  => 'UTF-8'
+    );
+ 
     // Creating the Mime message
     $mime = new Mail_mime($crlf);
 
@@ -27,7 +34,7 @@ function send_mail(string $email, object $smtp, object $message) {
     $mime->setTXTBody($message->text);
     $mime->setHTMLBody($message->html);
 
-    $body = $mime->get();
+    $body = $mime->get($mime_params);
     $headers = $mime->headers($headers);
 
     // Send the mail
@@ -35,6 +42,7 @@ function send_mail(string $email, object $smtp, object $message) {
 
     //check mail sent or not
     if (PEAR::isError($mail)) {
+        echo $mail->getMessage();
         return false;
     } else {
         return true;

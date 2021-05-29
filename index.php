@@ -266,6 +266,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 } elseif (isset($_GET['type'])) {
     switch ($_GET['type']) {
+        
+        case "test":
+            if ($REDIRECT_TO)
+                header("refresh:3;url=" . $REDIRECT_TO);
+                echo "Redirecting..."."refresh:5;url=" . $REDIRECT_TO;
+            break;
+
         case "confirmation":
             if (!isset($_GET["token"])) {
                 echo $RUNTIME_ERROR->user_trying_invalid_get;
