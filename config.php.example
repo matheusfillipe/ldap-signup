@@ -97,5 +97,10 @@ $PASSWORD_CHANGED_EMAIL_TEMPLATE = (object)[
 // url to redirect to after mail confirmation. It will be 5 seconds of delay. Leave empty to none
 $REDIRECT_TO = "";
 
+// Registration callback. A function to run when registration is successfull
+$POST_REGISTER_HOOK = function(){
+  echo "THE IP: " . $_SERVER['REMOTE_ADDR'];
+};
+
 // displays php errors on the html page. Set to false for production
 $DEBUG = false;

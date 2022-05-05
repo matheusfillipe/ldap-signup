@@ -273,6 +273,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
                         redis_inc_ipdata(getClientIP(), "register");
                         echo $STRINGS->email_confirmation;
+                        if (isset($POST_REGISTER_HOOK)) $POST_REGISTER_HOOK($user);
                         include $TEMPLATE . "mail_confirmed.htm";
                     } else {
                         echo $STRINGS->email_confirmation;
